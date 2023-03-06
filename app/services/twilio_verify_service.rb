@@ -7,7 +7,6 @@ class TwilioVerifyService
 
   def self.verify_sms_token(phone_number, token)
     new.twilio_verify_service.verification_checks.create(to: e164_format(phone_number), code: token)
-
   end
 
   def self.e164_format(phone_number)

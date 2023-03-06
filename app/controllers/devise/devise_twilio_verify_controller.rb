@@ -23,6 +23,10 @@ class Devise::DeviseTwilioVerifyController < DeviseController
 
   # verify 2fa
   def POST_verify_twilio_verify
+    if @resource.mobile_phone.blank? || params[:token].blank?
+      return handle_invalid_token :verify_twilio_verify, :invalid_token
+    end
+
     verification_check = TwilioVerifyService.verify_sms_token(@resource.mobile_phone, params[:token])
 
     if verification_check.status == 'approved'
@@ -61,6 +65,10 @@ class Devise::DeviseTwilioVerifyController < DeviseController
   end
 
   def POST_verify_twilio_verify_installation
+    if @resource.mobile_phone.blank? || params[:token].blank?
+      return handle_invalid_token :verify_twilio_verify_installation, :not_enabled
+    end
+
     verification_check = TwilioVerifyService.verify_sms_token(@resource.mobile_phone, params[:token])
 
     self.resource.twilio_verify_enabled = token.ok?
@@ -80,7 +88,7 @@ class Devise::DeviseTwilioVerifyController < DeviseController
   end
 
   def request_sms
-    if !@resource
+    if @resource.blank? || @resource.mobile_phone.blank?
       render :json => {:sent => false, :message => "User couldn't be found."}
       return
     end
