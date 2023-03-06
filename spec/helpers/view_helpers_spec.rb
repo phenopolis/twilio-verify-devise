@@ -1,63 +1,42 @@
 # frozen_string_literal: true
 
-RSpec.describe DeviseAuthy::Views::Helpers, type: :helper do
-  describe "request phone call link" do
-    it "produces an anchor to the request-phone-call endpoint" do
-      link = helper.authy_request_phone_call_link
-      expect(link).to match(%r|href="/users/request-phone-call"|)
-      expect(link).to match(%r|data-method="post"|)
-      expect(link).to match(%r|data-remote="true"|)
-      expect(link).to match(%r|id="authy-request-phone-call-link"|)
-      expect(link).to match(%r|>Request phone call<|)
-    end
-
-    it "has customisable text" do
-      link = helper.authy_request_phone_call_link(title: "Make it ring!")
-      expect(link).to match(%r|>Make it ring!<|)
-    end
-  end
-
+RSpec.describe DeviseTwilioVerify::Views::Helpers, type: :helper do
   describe "request sms link" do
     it "produces an anchor to the request-sms endpoint" do
-      link = helper.authy_request_sms_link
+      link = helper.twilio_verify_request_sms_link
       expect(link).to match(%r|href="/users/request-sms"|)
       expect(link).to match(%r|data-method="post"|)
       expect(link).to match(%r|data-remote="true"|)
-      expect(link).to match(%r|id="authy-request-sms-link"|)
+      expect(link).to match(%r|id="twilio-verify-request-sms-link"|)
       expect(link).to match(%r|>Request SMS<|)
-    end
-
-    it "has customisable text" do
-      link = helper.authy_request_phone_call_link(title: "Send a message!")
-      expect(link).to match(%r|>Send a message!<|)
     end
   end
 
   describe "with a user" do
     let(:user) { create(:user) }
 
-    describe "verify_authy_form" do
+    describe "verify_twilio_verify_form" do
       it "creates a verify form with the user id as a field" do
         assign(:resource, user)
-        form = helper.verify_authy_form { "I'm in a form" }
-        expect(form).to match(%r|action="/users/verify_authy"|)
+        form = helper.verify_twilio_verify_form { "I'm in a form" }
+        expect(form).to match(%r|action="/users/verify_twilio_verify"|)
         expect(form).to match(%|<input type="hidden" name="user_id" id="user_id" value="#{user.id}"|)
       end
     end
 
-    describe "enable_authy_form" do
+    describe "enable_twilio_verify_form" do
       it "creates a verify form with the user id as a field" do
         assign(:resource, user)
-        form = helper.enable_authy_form { "I'm in a form" }
-        expect(form).to match(%r|action="/users/enable_authy"|)
+        form = helper.enable_twilio_verify_form { "I'm in a form" }
+        expect(form).to match(%r|action="/users/enable_twilio_verify"|)
       end
     end
 
-    describe "verify_authy_installation_form" do
+    describe "verify_twilio_verify_installation_form" do
       it "creates a verify form with the user id as a field" do
         assign(:resource, user)
-        form = helper.verify_authy_installation_form { "I'm in a form" }
-        expect(form).to match(%r|action="/users/verify_authy_installation"|)
+        form = helper.verify_twilio_verify_installation_form { "I'm in a form" }
+        expect(form).to match(%r|action="/users/verify_twilio_verify_installation"|)
       end
     end
 

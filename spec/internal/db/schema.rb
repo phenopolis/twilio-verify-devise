@@ -20,12 +20,13 @@ ActiveRecord::Schema.define do
     t.integer "failed_attempts", default: 0
     t.string "unlock_token"
     t.datetime "locked_at"
-    # devise - authy_authenticable
+    # devise - twilio_verify_authenticable
     t.string "authy_id"
-    t.datetime "last_sign_in_with_authy"
-    t.boolean "authy_enabled", default: false
+    t.datetime "last_sign_in_with_twilio_verify"
+    t.boolean "twilio_verify_enabled", default: false
     # single table inheritance so we can have lockable users
     t.string "type"
+    t.string "mobile_phone"
 
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
