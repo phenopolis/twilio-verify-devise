@@ -20,7 +20,9 @@
 - Do a project code wide search & replace of these terms
   - `devise-authy` -> `devise-twilio-verify`
   - `authy_` -> `twilio_verify_`
+  - `_authy` -> `_twilio_verify`
   -  `authy-` -> `twilio-verify-`
+  -  `-authy` -> `-twilio-verify`
   -  `Authy` -> `TwilioVerify`
 - Do a project file search & replace of these any file with authy in the name (heres a few examples to replace)
   - app/javascript/src/deviseTwilioVerify.js
