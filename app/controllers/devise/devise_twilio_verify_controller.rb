@@ -27,15 +27,21 @@ class Devise::DeviseTwilioVerifyController < DeviseController
       return handle_invalid_token :verify_twilio_verify, :invalid_token
     end
 
-    verification_check = TwilioVerifyService.verify_sms_token(@resource.mobile_phone, params[:token])
+    begin
+      verification_check = TwilioVerifyService.verify_sms_token(@resource.mobile_phone, params[:token])
+      verification_check = verification_check.status == 'approved'
+    rescue Twilio::REST::RestError
+      verification_check = false
+    end
 
     # Hack to reproduce authy functionality of being able to verify 2FA via SMS or TOTP
     # not ideal as there could be network delays, but there is currently no alternative
-    if verification_check.status != 'approved' && @resource.twilio_totp_factor_sid.present?
+    if !verification_check && @resource.twilio_totp_factor_sid.present?
       verification_check = TwilioVerifyService.verify_totp_token(@resource, params[:token])
+      verification_check = verification_check.status == 'approved'
     end
 
-    if verification_check.status == 'approved'
+    if verification_check
       remember_device(@resource.id) if params[:remember_device].to_i == 1
       remember_user
       record_twilio_verify_authentication
