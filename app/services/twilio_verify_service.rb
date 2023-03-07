@@ -10,14 +10,14 @@ class TwilioVerifyService
   end
 
   def self.verify_totp_token(user, token)
-    new.twilio_client.verify.v2.services(twilio_verify_service_sid)
+    new.twilio_verify_service_v2
       .entities([Rails.env, user.id].join('-'))
       .challenges
       .create(auth_payload: token, factor_sid: user.twilio_totp_factor_sid)
   end
 
   def self.setup_totp_service(user)
-    new_factor = new.twilio_client.verify.v2.services(twilio_verify_service_sid)
+    new_factor = new.twilio_verify_service_v2
       .entities([Rails.env, user.id].join('-'))
       .new_factors
       .create(friendly_name: user.to_s, factor_type: 'totp')
@@ -32,7 +32,7 @@ class TwilioVerifyService
   def self.register_totp_service(user, token)
     # After user adds the app to their authenticator app, register the user by having them confirm a token
     # if this returns factor.status == 'verified', the user has been properly setup
-    new.twilio_client.verify.v2.services(twilio_verify_service_sid)
+    new.twilio_verify_service_v2
       .entities([Rails.env, user.id].join('-'))
       .factors(user.twilio_totp_factor_sid)
       .update(auth_payload: token)
@@ -54,6 +54,10 @@ class TwilioVerifyService
 
   def twilio_verify_service
     twilio_client.verify.services(twilio_verify_service_sid)
+  end
+
+  def twilio_verify_service_v2
+    twilio_client.verify.v2.services(twilio_verify_service_sid)
   end
 
   def e164_format(phone_number)
