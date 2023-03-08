@@ -43,9 +43,9 @@ class TwilioVerifyService
   end
 
   def initialize
-    @twilio_account_sid = Rails.application.credentials[:twilio_account_sid] || ENV['TWILIO_ACCOUNT_SID']
-    @twilio_auth_token = Rails.application.credentials[:twilio_auth_token] || ENV['TWILIO_AUTH_TOKEN']
-    @twilio_verify_service_sid = Rails.application.credentials[:twilio_verify_service_sid] || ENV['TWILIO_VERIFY_SERVICE_SID']
+    @twilio_account_sid = Rails.application.credentials.twilio_account_sid || ENV['TWILIO_ACCOUNT_SID']
+    @twilio_auth_token = Rails.application.credentials.twilio_auth_token || ENV['TWILIO_AUTH_TOKEN']
+    @twilio_verify_service_sid = Rails.application.credentials.twilio_verify_service_sid || ENV['TWILIO_VERIFY_SERVICE_SID']
 
     raise 'Missing Twilio credentials' unless @twilio_account_sid && @twilio_auth_token && @twilio_verify_service_sid
 
