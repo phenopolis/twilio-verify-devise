@@ -1,4 +1,4 @@
-# Migrate Authy to Twilio Verify API
+# Migrate Authy to Twilio Verify API (for SMS and TOTP 2FA)
 
 ### This gem is meant to be a drop-in replacement for devise-authy in a Rails app (minus the following features)
 - Currently only support mobile phones with US country codes
@@ -6,27 +6,37 @@
 - Removed ability to request a phone call
 
 ### Just follow the steps below to migrate:
-- Swap out `devise-authy` in your Gemfile with `devise-twilio-verify` (ref this repo for now)
-- Setup a Twilio Verify account 
-- Add env vars for 
+- Swap out `devise-authy` in your Gemfile with `devise-twilio-verify` (ref this repo/branch for now)
+- `gem 'devise-twilio-verify', git: 'https://github.com/jayywolff/twilio-verify-devise.git', branch: 'authy-to-twilio-verify'`
+- Setup a Twilio Verify account
+- Add env vars and/or Rails credentials for:
   - `TWILIO_AUTH_TOKEN`
   - `TWILIO_ACCOUNT_SID`
   - `TWILIO_VERIFY_SERVICE_SID`
-- Create/run a migration to rename the following columns 
-  - `users.authy_enabled` -> `users.twilio_verify_enabled`
-  - `users.last_sign_in_with_twilio_verify` -> `users.last_sign_in_with_twilio_verify`
-  - you can also delete the `users.authy_id` column if you choose
+- Create/run a migration to rename  and add the following columns
+  ```ruby
+    class MigrateAuthyToTwilioVerify < ActiveRecord::Migration[6.1]
+      def change
+        rename_column :users, :authy_sms, :twilio_verify_sms
+        rename_column :users, :authy_enabled, :twilio_verify_enabled
+        rename_column :users, :last_sign_in_with_authy, :last_sign_in_with_twilio_verify
+        add_column :users, :twilio_totp_factor_sid, :string
+      end
+    end
+
+  ```
+- you can also delete the `users.authy_id` column if you choose
 - Twilio Verify service sms will be sent to `users.mobile_phone`, so make sure you store the users 2fa phone number in this column, can make this field name dynamic in the future
 - Do a project code wide search & replace of these terms
   - `devise-authy` -> `devise-twilio-verify`
   - `authy_` -> `twilio_verify_`
-  - `_authy` -> `_twilio_verify`
+  -  `_authy` -> `_twilio_verify`
   -  `authy-` -> `twilio-verify-`
   -  `-authy` -> `-twilio-verify`
   -  `Authy` -> `TwilioVerify`
-- Do a project file search & replace of these any file with authy in the name (heres a few examples to replace)
+- Do a project file search & replace of any file with authy in the name (here's a few examples to replace)
   - app/javascript/src/deviseTwilioVerify.js
-  - app/javascript/src/css/devise_twilio_verify.scss
+  - app/assets/stylesheets/devise_twilio_verify.scss
   - config/locales/devise.twilio_verify.en.yml
 
 # Twilio Verify Devise [![Build Status](https://github.com/twilio/authy-devise/workflows/build/badge.svg)](https://github.com/twilio/authy-devise/actions)
