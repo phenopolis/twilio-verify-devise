@@ -12,10 +12,11 @@ FactoryBot.define do
   factory :user do
     email { generate(:email) }
     password { "correct horse battery staple" }
+    mobile_phone { '1234567890'}
 
-    factory :authy_user do
+    factory :twilio_verify_user do
       authy_id { generate(:authy_id) }
-      authy_enabled { true }
+      twilio_verify_enabled { true }
     end
   end
 
@@ -24,10 +25,10 @@ FactoryBot.define do
     password { "correct horse battery staple" }
   end
 
-  factory :lockable_authy_user, class: LockableUser do
+  factory :lockable_twilio_verify_user, class: LockableUser do
     email { generate(:email) }
     password { "correct horse battery staple" }
     authy_id { generate(:authy_id) }
-    authy_enabled { true }
+    twilio_verify_enabled { true }
   end
 end

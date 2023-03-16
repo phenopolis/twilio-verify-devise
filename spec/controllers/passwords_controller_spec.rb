@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe DeviseAuthy::PasswordsController, type: :controller do
+RSpec.describe DeviseTwilioVerify::PasswordsController, type: :controller do
   before(:each) { request.env["devise.mapping"] = Devise.mappings[:user] }
 
   describe "during Devise :recoverable flow reset password stage" do
@@ -19,7 +19,7 @@ RSpec.describe DeviseAuthy::PasswordsController, type: :controller do
     end
 
     describe "with a user with authy id and authy enabled" do
-      let(:user) { create(:authy_user) }
+      let(:user) { create(:twilio_verify_user) }
 
       it "should not sign in the user after password reset" do
         token = user.send_reset_password_instructions
