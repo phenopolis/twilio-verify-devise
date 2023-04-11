@@ -6,8 +6,8 @@
 - Removed ability to request a phone call
 
 ### Just follow the steps below to migrate:
-- Swap out `devise-authy` in your Gemfile with `devise-twilio-verify` (ref this repo/branch for now)
-- `gem 'devise-twilio-verify', git: 'https://github.com/jayywolff/twilio-verify-devise.git', branch: 'authy-to-twilio-verify'`
+- Swap out `devise-authy` in your Gemfile with `devise-twilio-verify`
+- `gem 'devise-twilio-verify'
 - Setup a Twilio Verify account
 - Add env vars and/or Rails credentials for:
   - `TWILIO_AUTH_TOKEN`
