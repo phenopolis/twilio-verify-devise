@@ -87,9 +87,9 @@ class Devise::DeviseTwilioVerifyController < DeviseController
 
     verification_check = TwilioVerifyService.verify_sms_token(@resource.mobile_phone, params[:token])
 
-    self.resource.twilio_verify_enabled = token.ok?
+    self.resource.twilio_verify_enabled = verification_check.status == 'approved'
 
-    if token.ok? && self.resource.save
+    if verification_check.status == 'approved' && self.resource.save
       remember_device(@resource.id) if params[:remember_device].to_i == 1
       record_twilio_verify_authentication
       set_flash_message(:notice, :enabled)
