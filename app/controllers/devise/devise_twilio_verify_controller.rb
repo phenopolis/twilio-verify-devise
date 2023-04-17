@@ -50,6 +50,10 @@ class Devise::DeviseTwilioVerifyController < DeviseController
       handle_invalid_token :verify_twilio_verify, :invalid_token
     end
   end
+  
+  def GET_enable_twilio_verify
+    render :enable_twilio_verify  
+  end
 
   # enable 2fa
   def POST_enable_twilio_verify
