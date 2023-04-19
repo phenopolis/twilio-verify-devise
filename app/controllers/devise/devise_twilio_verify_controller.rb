@@ -50,6 +50,10 @@ class Devise::DeviseTwilioVerifyController < DeviseController
       handle_invalid_token :verify_twilio_verify, :invalid_token
     end
   end
+  
+  def GET_enable_twilio_verify
+    render :enable_twilio_verify  
+  end
 
   # enable 2fa
   def POST_enable_twilio_verify
@@ -83,9 +87,9 @@ class Devise::DeviseTwilioVerifyController < DeviseController
 
     verification_check = TwilioVerifyService.verify_sms_token(@resource.mobile_phone, params[:token])
 
-    self.resource.twilio_verify_enabled = token.ok?
+    self.resource.twilio_verify_enabled = verification_check.status == 'approved'
 
-    if token.ok? && self.resource.save
+    if verification_check.status == 'approved' && self.resource.save
       remember_device(@resource.id) if params[:remember_device].to_i == 1
       record_twilio_verify_authentication
       set_flash_message(:notice, :enabled)
