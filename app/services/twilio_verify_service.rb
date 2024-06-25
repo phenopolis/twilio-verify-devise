@@ -2,25 +2,25 @@ class TwilioVerifyService
   attr_reader :twilio_client, :twilio_account_sid, :twilio_auth_token, :twilio_verify_service_sid
 
   def self.send_sms_token(phone_number)
-    new.twilio_verify_service.verifications.create(to: e164_format(phone_number), channel: 'sms')
+    new.twilio_verify_service.verifications.create(to: phone_number, channel: 'sms')
   end
 
   def self.verify_sms_token(phone_number, token)
-    new.twilio_verify_service.verification_checks.create(to: e164_format(phone_number), code: token)
+    new.twilio_verify_service.verification_checks.create(to: phone_number, code: token)
   end
 
   def self.verify_totp_token(user, token)
     new.twilio_verify_service_v2
-      .entities([Rails.env, user.id].join('-'))
-      .challenges
-      .create(auth_payload: token, factor_sid: user.twilio_totp_factor_sid)
+       .entities([Rails.env, user.id].join('-'))
+       .challenges
+       .create(auth_payload: token, factor_sid: user.twilio_totp_factor_sid)
   end
 
   def self.setup_totp_service(user)
     new_factor = new.twilio_verify_service_v2
-      .entities([Rails.env, user.id].join('-'))
-      .new_factors
-      .create(friendly_name: user.to_s, factor_type: 'totp')
+                    .entities([Rails.env, user.id].join('-'))
+                    .new_factors
+                    .create(friendly_name: user.to_s, factor_type: 'totp')
 
     user.update(twilio_totp_factor_sid: new_factor.sid)
 
@@ -33,13 +33,9 @@ class TwilioVerifyService
     # After user adds the app to their authenticator app, register the user by having them confirm a token
     # if this returns factor.status == 'verified', the user has been properly setup
     new.twilio_verify_service_v2
-      .entities([Rails.env, user.id].join('-'))
-      .factors(user.twilio_totp_factor_sid)
-      .update(auth_payload: token)
-  end
-
-  def self.e164_format(phone_number)
-    "+1#{phone_number.gsub(/[^0-9a-z\\s]/i, '')}"
+       .entities([Rails.env, user.id].join('-'))
+       .factors(user.twilio_totp_factor_sid)
+       .update(auth_payload: token)
   end
 
   def initialize
@@ -58,9 +54,5 @@ class TwilioVerifyService
 
   def twilio_verify_service_v2
     twilio_client.verify.v2.services(twilio_verify_service_sid)
-  end
-
-  def e164_format(phone_number)
-    self.class.e164_format(phone_number)
   end
 end
